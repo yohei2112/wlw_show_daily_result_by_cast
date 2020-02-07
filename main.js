@@ -103,17 +103,16 @@ function aggregateResultByMatchLogDocument(targetDocument, result = {}) {
 }
 
 function appendDailyResultByCast(dailyResultByCasts, targetBlock) {
+  const targetBlockHeight = targetBlock.clientHeight;
   targetBlock.style.backgroundPositionY = "top";
-  targetBlock.style.height = 60 * (Math.ceil(Object.keys(dailyResultByCasts).length / 2) + 1) + "px";
+  targetBlock.style.height = targetBlockHeight * (Object.keys(dailyResultByCasts).length + 1) + "px";
   targetBlock.style.textAlign = "left";
 
   Object.keys(dailyResultByCasts).forEach((castHash) => {
     var castBlock = document.createElement("div");
-    castBlock.style.padding = "20px";
+    castBlock.style.padding = Math.floor(targetBlockHeight / 3) + "px";
     castBlock.style.textAlign = "right";
-    castBlock.style.height = "60px";
-    castBlock.style.width = "50%";
-    castBlock.style.display = "inline-block";
+    castBlock.style.height = targetBlockHeight + "px";
     castBlock.style.backgroundImage = "url(common/img_cast/" + castHash + ")";
     castBlock.style.backgroundRepeat = "no-repeat";
     castBlock.style.backgroundPositionX = "left";
