@@ -21,7 +21,7 @@ class showDailyResultByCastAtMatchLog {
           console.log("resolve");
           setTimeout(() => {
             resolve(req.response);
-          }, 2000);
+          }, 1500);
         } else {
           // Otherwise reject with the status text
           // which will hopefully be a meaningful error
@@ -38,9 +38,9 @@ class showDailyResultByCastAtMatchLog {
       req.send();
     });
   }
-  getResultByMatchLog(element) {
+  getResultByMatchLog(element, battleType) {
     return element
-      .getElementsByClassName("match_icon")[0]
+      .getElementsByClassName(`${battleType}_icon`)[0]
       .firstElementChild.src.endsWith("icon_win.png")
       ? "win"
       : "lose";
@@ -52,63 +52,89 @@ class showDailyResultByCastAtMatchLog {
       .firstElementChild.src.slice(-36);
   }
 
-  aggregateResultByMatchLogDocument(targetDocument) {
+  hasNextPage(targetDocument) {
+    return (
+      targetDocument.getElementsByClassName("page_block_page_on")[0] &&
+      targetDocument
+        .getElementsByClassName("page_block_page_on")[0]
+        .nextElementSibling.classList.contains("page_block_page")
+    );
+  }
+
+  getNextPageUrl(targetDocument) {
+    return targetDocument
+      .getElementsByClassName("page_block_page_on")[0]
+      .nextElementSibling.attributes.onclick.value.split("location.href=")[1]
+      .replace(/'/g, "");
+  }
+
+  aggregateResultByMatchLogDocument(targetDocument, targetBattleTypeClassName) {
     console.log("targetDocument " + targetDocument);
+    const battleType = targetDocument.URL.split("type=")[1]
+      ? targetDocument.URL.split("type=")[1].split("&")[0]
+      : "match";
     [].forEach.call(
-      targetDocument.getElementsByClassName("block_match_log"),
+      targetDocument.getElementsByClassName(`block_${battleType}_log`),
       matchLog => {
         var matchDate = matchLog
-          .getElementsByClassName("match_date")[0]
+          .getElementsByClassName(`${battleType}_date`)[0]
           .innerText.slice(0, 10);
         if (!this.dailyResultByCast[matchDate]) {
           this.dailyResultByCast[matchDate] = {};
         }
+        if (!this.dailyResultByCast[matchDate][targetBattleTypeClassName]) {
+          this.dailyResultByCast[matchDate][targetBattleTypeClassName] = {};
+        }
         if (
-          !this.dailyResultByCast[matchDate][
+          !this.dailyResultByCast[matchDate][targetBattleTypeClassName][
             this.getMyCastHashByMatchLog(matchLog)
           ]
         ) {
-          this.dailyResultByCast[matchDate][
+          this.dailyResultByCast[matchDate][targetBattleTypeClassName][
             this.getMyCastHashByMatchLog(matchLog)
           ] = {};
-          this.dailyResultByCast[matchDate][
+          this.dailyResultByCast[matchDate][targetBattleTypeClassName][
             this.getMyCastHashByMatchLog(matchLog)
           ]["win"] = 0;
-          this.dailyResultByCast[matchDate][
+          this.dailyResultByCast[matchDate][targetBattleTypeClassName][
             this.getMyCastHashByMatchLog(matchLog)
           ]["lose"] = 0;
         }
-        this.dailyResultByCast[matchDate][
+        this.dailyResultByCast[matchDate][targetBattleTypeClassName][
           this.getMyCastHashByMatchLog(matchLog)
-        ][this.getResultByMatchLog(matchLog)]++;
+        ][this.getResultByMatchLog(matchLog, battleType)]++;
       }
     );
-    if (targetDocument.getElementsByClassName("page_block_next").length > 0) {
+    if (this.hasNextPage(targetDocument)) {
       console.log("hasNextPage");
-      var nextPageUrl = targetDocument
-        .getElementsByClassName("page_block_next")[0]
-        .attributes.onclick.value.split("location.href=")[1]
-        .replace(/'/g, "");
-      this.get(nextPageUrl).then(response => {
-        this.aggregateResultByMatchLogDocument(response);
+      this.get(this.getNextPageUrl(targetDocument)).then(response => {
+        this.aggregateResultByMatchLogDocument(
+          response,
+          targetBattleTypeClassName
+        );
       });
     } else {
       console.log("hasntNextPage");
     }
   }
 
-  appendDailyResultByCast(targetDailyLogElements) {
+  appendDailyResultByCast(targetDailyLogElements, targetBattleTypeClassName) {
     [].forEach.call(targetDailyLogElements, targetBlock => {
       var targetDate = targetBlock.firstElementChild.href.slice(-10);
       var targetBlockHeight = targetBlock.clientHeight;
       targetBlock.style.backgroundPositionY = "top";
       targetBlock.style.height =
         targetBlockHeight *
-          (Object.keys(this.dailyResultByCast[targetDate]).length + 1) +
+          (Object.keys(
+            this.dailyResultByCast[targetDate][targetBattleTypeClassName]
+          ).length +
+            1) +
         "px";
       targetBlock.style.textAlign = "left";
 
-      Object.keys(this.dailyResultByCast[targetDate]).forEach(castHash => {
+      Object.keys(
+        this.dailyResultByCast[targetDate][targetBattleTypeClassName]
+      ).forEach(castHash => {
         var castBlock = document.createElement("div");
         castBlock.style.padding = Math.floor(targetBlockHeight / 3) + "px";
         castBlock.style.textAlign = "right";
@@ -121,27 +147,41 @@ class showDailyResultByCastAtMatchLog {
         castBlock.style.fontSize = "1rem";
         castBlock.innerHTML =
           (
-            this.dailyResultByCast[targetDate][castHash]["win"] +
-            this.dailyResultByCast[targetDate][castHash]["lose"]
+            this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+              castHash
+            ]["win"] +
+            this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+              castHash
+            ]["lose"]
           )
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
           "戦" +
-          this.dailyResultByCast[targetDate][castHash]["win"]
+          this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+            castHash
+          ]["win"]
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
           "勝" +
-          this.dailyResultByCast[targetDate][castHash]["lose"]
+          this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+            castHash
+          ]["lose"]
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
           "敗" +
           Math.floor(
-            (this.dailyResultByCast[targetDate][castHash]["win"] /
-              (this.dailyResultByCast[targetDate][castHash]["win"] +
-                this.dailyResultByCast[targetDate][castHash]["lose"])) *
+            (this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+              castHash
+            ]["win"] /
+              (this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+                castHash
+              ]["win"] +
+                this.dailyResultByCast[targetDate][targetBattleTypeClassName][
+                  castHash
+                ]["lose"])) *
               100
           )
             .toString()
@@ -154,13 +194,11 @@ class showDailyResultByCastAtMatchLog {
     });
   }
 
-  recursiveProcessToDailyResult(targetDailyLogElements, index) {
-    if (targetDailyLogElements.length <= index) {
-      this.appendDailyResultByCast(targetDailyLogElements);
-      console.log("end");
-      console.log(this.dailyResultByCast);
-      return;
-    }
+  recursiveProcessToDailyResult(
+    targetDailyLogElements,
+    targetBattleTypeClassName,
+    index = 0
+  ) {
     this.get(targetDailyLogElements[index].firstElementChild.href).then(
       response => {
         console.log("called index " + index + " then");
@@ -171,8 +209,27 @@ class showDailyResultByCastAtMatchLog {
         ) {
           console.log("アクセス制限");
         } else {
-          this.aggregateResultByMatchLogDocument(response);
-          this.recursiveProcessToDailyResult(targetDailyLogElements, ++index);
+          this.aggregateResultByMatchLogDocument(
+            response,
+            targetBattleTypeClassName
+          );
+          if (targetDailyLogElements.length - 1 === index) {
+            setTimeout(() => {
+              this.appendDailyResultByCast(
+                targetDailyLogElements,
+                targetBattleTypeClassName
+              );
+            }, 2000);
+            console.log("end");
+            console.log(this.dailyResultByCast);
+            return;
+          } else {
+            this.recursiveProcessToDailyResult(
+              targetDailyLogElements,
+              targetBattleTypeClassName,
+              ++index
+            );
+          }
         }
       }
     );
@@ -180,7 +237,8 @@ class showDailyResultByCastAtMatchLog {
 
   main() {
     const targetBattleTypeClassNames = [
-      "block_matchlog_match" // 全国対戦
+      "block_matchlog_match", // 全国対戦
+      "block_matchlog_astrology1"
       /*
           "block_matchlog_astrology",
           "block_matchlog_astrology1",
@@ -196,7 +254,10 @@ class showDailyResultByCastAtMatchLog {
       var targetDailyLogElements = document.getElementsByClassName(
         targetBattleTypeClassName
       );
-      this.recursiveProcessToDailyResult(targetDailyLogElements, 0);
+      this.recursiveProcessToDailyResult(
+        targetDailyLogElements,
+        targetBattleTypeClassName
+      );
     });
   }
 }
