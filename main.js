@@ -123,11 +123,14 @@ class showDailyResultByCastAtMatchLog {
       var targetDate = targetBlock.firstElementChild.href.slice(-10);
       var targetBlockHeight = targetBlock.clientHeight;
       targetBlock.style.backgroundPositionY = "top";
+      var castColumnCount = targetBlockHeight === 60 ? 2 : 1;
       targetBlock.style.height =
         targetBlockHeight *
-          (Object.keys(
-            this.dailyResultByCast[targetDate][targetBattleTypeClassName]
-          ).length +
+          (Math.ceil(
+            Object.keys(
+              this.dailyResultByCast[targetDate][targetBattleTypeClassName]
+            ).length / castColumnCount
+          ) +
             1) +
         "px";
       targetBlock.style.textAlign = "left";
@@ -136,15 +139,22 @@ class showDailyResultByCastAtMatchLog {
         this.dailyResultByCast[targetDate][targetBattleTypeClassName]
       ).forEach(castHash => {
         var castBlock = document.createElement("div");
-        castBlock.style.padding = Math.floor(targetBlockHeight / 3) + "px";
-        castBlock.style.textAlign = "right";
+        if (targetBlockHeight === 60) {
+          castBlock.style.display = "inline-block";
+          castBlock.style.width = "50%";
+          castBlock.style.padding = "0 0 0 50px";
+          castBlock.style.fontSize = "1.1rem";
+        } else {
+          castBlock.style.fontSize = "1rem";
+        }
+        castBlock.style.lineHeight = targetBlockHeight + "px";
         castBlock.style.height = targetBlockHeight + "px";
+        castBlock.style.textAlign = "center";
         castBlock.style.backgroundImage =
           "url(common/img_cast/" + castHash + ")";
         castBlock.style.backgroundRepeat = "no-repeat";
         castBlock.style.backgroundPositionX = "left";
         castBlock.style.backgroundSize = "contain";
-        castBlock.style.fontSize = "1rem";
         castBlock.innerHTML =
           (
             this.dailyResultByCast[targetDate][targetBattleTypeClassName][
