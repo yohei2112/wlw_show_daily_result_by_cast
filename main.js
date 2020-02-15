@@ -13,12 +13,10 @@ class showDailyResultByCastAtMatchLog {
       req.responseType = "document";
 
       req.onload = function() {
-        console.log("onload");
         // This is called even on 404 etc
         // so check the status
         if (req.status == 200) {
           // Resolve the promise with the response text
-          console.log("resolve");
           setTimeout(() => {
             resolve(req.response);
           }, 1500);
@@ -69,7 +67,6 @@ class showDailyResultByCastAtMatchLog {
   }
 
   aggregateResultByMatchLogDocument(targetDocument, targetBattleTypeClassName) {
-    console.log("targetDocument " + targetDocument);
     const battleType = targetDocument.URL.split("type=")[1]
       ? targetDocument.URL.split("type=")[1].split("&")[0]
       : "match";
@@ -106,15 +103,12 @@ class showDailyResultByCastAtMatchLog {
       }
     );
     if (this.hasNextPage(targetDocument)) {
-      console.log("hasNextPage");
       this.get(this.getNextPageUrl(targetDocument)).then(response => {
         this.aggregateResultByMatchLogDocument(
           response,
           targetBattleTypeClassName
         );
       });
-    } else {
-      console.log("hasntNextPage");
     }
   }
 
@@ -146,6 +140,7 @@ class showDailyResultByCastAtMatchLog {
           castBlock.style.fontSize = "1.1rem";
         } else {
           castBlock.style.fontSize = "1rem";
+          castBlock.style.margin = "0 0 0 30px"
         }
         castBlock.style.lineHeight = targetBlockHeight + "px";
         castBlock.style.height = targetBlockHeight + "px";
@@ -218,23 +213,26 @@ class showDailyResultByCastAtMatchLog {
             "アクセス過多につき、閲覧を制限します。しばらくお待ちください。"
         ) {
           console.log("アクセス制限");
+          alert("アクセスが制限されています  ")
         } else {
           this.aggregateResultByMatchLogDocument(
             response,
             targetBattleTypeClassName
           );
           if (targetDailyLogElements.length - 1 === index) {
+            console.log("end");
+            console.log(this.dailyResultByCast);
             setTimeout(() => {
               this.appendDailyResultByCast(
                 targetDailyLogElements,
                 targetBattleTypeClassName
               );
             }, 2000);
-            console.log("end");
-            console.log(this.dailyResultByCast);
-            return;
+            setTimeout(() => {
+              this.getTargetDailyLogElementsAndProcess(targetBattleTypeClassName)
+            }, 1000);
           } else {
-            this.recursiveProcessToDailyResult(
+            return this.recursiveProcessToDailyResult(
               targetDailyLogElements,
               targetBattleTypeClassName,
               ++index
@@ -245,10 +243,11 @@ class showDailyResultByCastAtMatchLog {
     );
   }
 
-  main() {
+  getTargetDailyLogElementsAndProcess(targetBattleTypeClassName) {
     const targetBattleTypeClassNames = [
       "block_matchlog_match", // 全国対戦
-      "block_matchlog_astrology1"
+      "block_matchlog_astrology1",
+      "block_matchlog_concert"
       /*
           "block_matchlog_astrology",
           "block_matchlog_astrology1",
@@ -258,17 +257,20 @@ class showDailyResultByCastAtMatchLog {
           "block_matchlog_training",
       */
     ];
+    var index = targetBattleTypeClassName ? targetBattleTypeClassNames.indexOf(targetBattleTypeClassName) + 1 : 0;
+    if (targetBattleTypeClassNames.length == index) return;
+    var targetBattleTypeClassName = targetBattleTypeClassNames[index]
+    var targetDailyLogElements = document.getElementsByClassName(
+      targetBattleTypeClassName
+    );
+    this.recursiveProcessToDailyResult(
+      targetDailyLogElements,
+      targetBattleTypeClassName
+    )
+  }
 
-    targetBattleTypeClassNames.forEach(targetBattleTypeClassName => {
-      console.log("targetBattleTypeClassNames: " + targetBattleTypeClassName);
-      var targetDailyLogElements = document.getElementsByClassName(
-        targetBattleTypeClassName
-      );
-      this.recursiveProcessToDailyResult(
-        targetDailyLogElements,
-        targetBattleTypeClassName
-      );
-    });
+  main() {
+    this.getTargetDailyLogElementsAndProcess();
   }
 }
 
