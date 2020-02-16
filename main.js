@@ -19,7 +19,7 @@ class showDailyResultByCastAtMatchLog {
           // Resolve the promise with the response text
           setTimeout(() => {
             resolve(req.response);
-          }, 1500);
+          }, 500);
         } else {
           // Otherwise reject with the status text
           // which will hopefully be a meaningful error
@@ -137,9 +137,8 @@ class showDailyResultByCastAtMatchLog {
           castBlock.style.display = "inline-block";
           castBlock.style.width = "50%";
           castBlock.style.padding = "0 0 0 50px";
-          castBlock.style.fontSize = "1.1rem";
         } else {
-          castBlock.style.fontSize = "1rem";
+          castBlock.style.fontSize = "1.1rem";
           castBlock.style.margin = "0 0 0 30px"
         }
         castBlock.style.lineHeight = targetBlockHeight + "px";
@@ -151,6 +150,7 @@ class showDailyResultByCastAtMatchLog {
         castBlock.style.backgroundPositionX = "left";
         castBlock.style.backgroundSize = "contain";
         castBlock.innerHTML =
+          "<span style='color:#000;'>" +
           (
             this.dailyResultByCast[targetDate][targetBattleTypeClassName][
               castHash
@@ -162,21 +162,21 @@ class showDailyResultByCastAtMatchLog {
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
-          "戦" +
+          "</span><span style='font-size:0.6em;'>戦</span><span style='color:#a50000;'>" +
           this.dailyResultByCast[targetDate][targetBattleTypeClassName][
             castHash
           ]["win"]
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
-          "勝" +
+          "</span><span style='font-size:0.6em;'>勝</span><span style='color:#007ae1;'>" +
           this.dailyResultByCast[targetDate][targetBattleTypeClassName][
             castHash
           ]["lose"]
             .toString()
             .padStart(3, " ")
             .replace(/ /g, "&ensp;") +
-          "敗" +
+          "</span><span style='font-size:0.6em;'>敗</span>" +
           Math.floor(
             (this.dailyResultByCast[targetDate][targetBattleTypeClassName][
               castHash
@@ -192,7 +192,7 @@ class showDailyResultByCastAtMatchLog {
             .toString()
             .padStart(4, " ")
             .replace(/ /g, "&ensp;") +
-          "%";
+          "<span style='font-size:0.6em;'>%</span>";
 
         targetBlock.appendChild(castBlock);
       });
