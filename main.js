@@ -214,6 +214,13 @@ class showDailyResultByCastAtMatchLog {
         ) {
           console.log("アクセス制限");
           alert("アクセスが制限されています  ")
+        } else if (
+          response.getElementById("info_message_box") &&
+          response.getElementById("info_message_box").textContent ==
+            "ログアウトしました。"
+        ) {
+          console.log("ログアウト");
+          alert("ログアウトしていますログインしてから再実行してください")
         } else {
           this.aggregateResultByMatchLogDocument(
             response,
