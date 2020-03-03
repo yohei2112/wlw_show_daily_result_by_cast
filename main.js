@@ -252,6 +252,12 @@ class showDailyResultByCastAtMatchLog {
   }
 
   main() {
+    if (
+      !location.href.startsWith("https://wonderland-wars.net/matchlog_sub.html")
+    ) {
+      alert("対戦履歴画面で実行してください");
+      return;
+    }
     const targetBattleTypeClassNames = [
       "block_matchlog_match", // 全国対戦
       "block_matchlog_astrology1",
