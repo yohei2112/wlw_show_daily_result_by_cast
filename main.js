@@ -241,7 +241,7 @@ class showDailyResultByCastAtMatchLog {
     var showCastResultsButton = document.createElement("button");
     showCastResultsButton.textContent = "キャスト別勝敗数を表示";
     showCastResultsButton.classList.add("appended-button");
-    showCastResultsButton.style.margin = "10px";
+    showCastResultsButton.style.margin = "5px";
     showCastResultsButton.addEventListener("click", {
       handleEvent: this.processToDailyResult,
       targetDailyLogElement: targetDailyLogElement,
