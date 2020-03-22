@@ -23,6 +23,7 @@ class showDailyResultByCastAtMatchLog {
       req.send();
     });
   }
+
   getResultByMatchLog(element, battleType) {
     return element
       .getElementsByClassName(`${battleType}_icon`)[0]
@@ -59,9 +60,11 @@ class showDailyResultByCastAtMatchLog {
     targetDailyLogElement,
     dailyResultByCast = {}
   ) {
-    const battleType = targetDocument.URL.split("type=")[1]
-      ? targetDocument.URL.split("type=")[1].split("&")[0]
-      : "match";
+    const battleType =
+      targetDocument.URL.split("type=")[1] &&
+      targetDocument.URL.split("type=")[1].split("&")[0] != "all"
+        ? targetDocument.URL.split("type=")[1].split("&")[0]
+        : "match";
     [].forEach.call(
       targetDocument.getElementsByClassName(`block_${battleType}_log`),
       matchLog => {
