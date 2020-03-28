@@ -145,19 +145,35 @@ class showDailyResultByCastAtMatchLog {
       if (targetBlockHeight === 60) {
         castBlock.style.display = "inline-block";
         castBlock.style.width = "50%";
-        castBlock.style.padding = "0 0 0 50px";
+        castBlock.style.fontSize = "1.3em";
       } else {
-        castBlock.style.fontSize = "1.1rem";
-        castBlock.style.margin = "0 0 0 30px";
+        castBlock.style.fontSize = "1.1em";
       }
       castBlock.style.lineHeight = targetBlockHeight + "px";
       castBlock.style.height = targetBlockHeight + "px";
-      castBlock.style.textAlign = "center";
-      castBlock.style.backgroundImage = "url(common/img_cast/" + castHash + ")";
-      castBlock.style.backgroundRepeat = "no-repeat";
-      castBlock.style.backgroundPositionX = "left";
-      castBlock.style.backgroundSize = "contain";
-      castBlock.innerHTML =
+      castBlock.style.textAlign = "right";
+
+      var resultTable = document.createElement("table");
+      resultTable.style.width = (targetBlockHeight === 60) ? "100%" : "80%";
+      resultTable.style.margin = "auto";
+      var resultTableRow = document.createElement("tr");
+      var resultTableDataBase = document.createElement("td");
+      resultTableDataBase.style.width = "18%";
+      var resultTableDataImg = resultTableDataBase.cloneNode(true);
+      var resultTableDataTotal = resultTableDataBase.cloneNode(true);
+      var resultTableDataWin = resultTableDataBase.cloneNode(true);
+      var resultTableDataLose = resultTableDataBase.cloneNode(true);
+      var resultTableDataRate = resultTableDataBase.cloneNode(true);
+      resultTableDataRate.style.width = "24%";
+
+      var castImage = document.createElement("img");
+      castImage.src = "common/img_cast/" + castHash;
+      castImage.style.margin = "auto";
+      castImage.style.display = "block";
+      castImage.style.height = targetBlockHeight + "px";
+      resultTableDataImg.appendChild(castImage);
+
+      resultTableDataTotal.innerHTML =
         "<span style='color:#000;'>" +
         (
           dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
@@ -166,26 +182,21 @@ class showDailyResultByCastAtMatchLog {
           dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
             "lose"
           ]
-        )
-          .toString()
-          .padStart(3, " ")
-          .replace(/ /g, "&ensp;") +
-        "</span><span style='font-size:0.6em;'>戦</span><span style='color:#a50000;'>" +
+        ) +
+        "</span><span style='font-size:0.6em;'>戦</span>"
+      resultTableDataWin.innerHTML =
+        "<span style='color:#a50000;'>" +
         dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
           "win"
-        ]
-          .toString()
-          .padStart(3, " ")
-          .replace(/ /g, "&ensp;") +
-        "</span><span style='font-size:0.6em;'>勝</span><span style='color:#007ae1;'>" +
+        ] +
+        "</span><span style='font-size:0.6em;'>勝</span>"
+      resultTableDataLose.innerHTML =
+        "<span style='color:#007ae1;'>" +
         dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
           "lose"
-        ]
-          .toString()
-          .padStart(3, " ")
-          .replace(/ /g, "&ensp;") +
-        "</span><span style='font-size:0.6em;'>敗</span>" +
-        Math.floor(
+        ] +
+        "</span><span style='font-size:0.6em;'>敗</span>"
+      resultTableDataRate.innerHTML =　Math.floor(
           (dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
             "win"
           ] /
@@ -196,12 +207,16 @@ class showDailyResultByCastAtMatchLog {
                 castHash
               ]["lose"])) *
             100
-        )
-          .toString()
-          .padStart(4, " ")
-          .replace(/ /g, "&ensp;") +
+        ) +
         "<span style='font-size:0.6em;'>%</span>";
 
+      resultTableRow.appendChild(resultTableDataImg);
+      resultTableRow.appendChild(resultTableDataTotal);
+      resultTableRow.appendChild(resultTableDataWin);
+      resultTableRow.appendChild(resultTableDataLose);
+      resultTableRow.appendChild(resultTableDataRate);
+      resultTable.appendChild(resultTableRow);
+      castBlock.appendChild(resultTable);
       targetDailyLogElement.appendChild(castBlock);
     });
   }
