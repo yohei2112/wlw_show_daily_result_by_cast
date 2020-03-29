@@ -146,7 +146,7 @@ class showDailyResultByCastAtMatchLog {
         castBlock.style.display = "inline-block";
         castBlock.style.width = "50%";
       }
-      castBlock.style.fontSize = "1.3em";
+      castBlock.style.fontSize = "1.2em";
       castBlock.style.lineHeight = targetBlockHeight + "px";
       castBlock.style.height = targetBlockHeight + "px";
       castBlock.style.textAlign = "right";
