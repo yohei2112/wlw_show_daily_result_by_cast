@@ -154,7 +154,7 @@ class showDailyResultByCastAtMatchLog {
       castBlock.style.textAlign = "right";
 
       var resultTable = document.createElement("table");
-      resultTable.style.width = (targetBlockHeight === 60) ? "100%" : "80%";
+      resultTable.style.width = targetBlockHeight === 60 ? "100%" : "80%";
       resultTable.style.margin = "auto";
       var resultTableRow = document.createElement("tr");
       var resultTableDataBase = document.createElement("td");
@@ -173,41 +173,30 @@ class showDailyResultByCastAtMatchLog {
       castImage.style.height = targetBlockHeight + "px";
       resultTableDataImg.appendChild(castImage);
 
-      resultTableDataTotal.innerHTML =
-        "<span style='color:#000;'>" +
-        (
-          dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
-            "win"
-          ] +
-          dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
-            "lose"
-          ]
-        ) +
-        "</span><span style='font-size:0.6em;'>戦</span>"
-      resultTableDataWin.innerHTML =
-        "<span style='color:#a50000;'>" +
+      const winCount =
         dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
           "win"
-        ] +
-        "</span><span style='font-size:0.6em;'>勝</span>"
-      resultTableDataLose.innerHTML =
-        "<span style='color:#007ae1;'>" +
+        ];
+      const loseCount =
         dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
           "lose"
-        ] +
-        "</span><span style='font-size:0.6em;'>敗</span>"
-      resultTableDataRate.innerHTML =　Math.floor(
-          (dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
-            "win"
-          ] /
-            (dailyResultByCast[targetDate][targetBattleTypeClassName][castHash][
-              "win"
-            ] +
-              dailyResultByCast[targetDate][targetBattleTypeClassName][
-                castHash
-              ]["lose"])) *
-            100
-        ) +
+        ];
+      const totalCount = winCount + loseCount;
+
+      resultTableDataTotal.innerHTML =
+        "<span style='color:#000;'>" +
+        totalCount +
+        "</span><span style='font-size:0.6em;'>戦</span>";
+      resultTableDataWin.innerHTML =
+        "<span style='color:#a50000;'>" +
+        winCount +
+        "</span><span style='font-size:0.6em;'>勝</span>";
+      resultTableDataLose.innerHTML =
+        "<span style='color:#007ae1;'>" +
+        loseCount +
+        "</span><span style='font-size:0.6em;'>敗</span>";
+      resultTableDataRate.innerHTML =
+        Math.floor((winCount / totalCount) * 100) +
         "<span style='font-size:0.6em;'>%</span>";
 
       resultTableRow.appendChild(resultTableDataImg);
@@ -254,7 +243,20 @@ class showDailyResultByCastAtMatchLog {
   addShowCastResultsButton(targetDailyLogElement, targetBattleTypeClassName) {
     targetDailyLogElement.style.backgroundPositionY = "top";
     targetDailyLogElement.style.height =
-      targetDailyLogElement.clientHeight * 2 + "px";
+      targetDailyLogElement.clientHeight * 3 + "px";
+
+    const totalCount = targetDailyLogElement.getElementsByClassName(
+      "matchlog_list_total"
+    )[0].textContent;
+    const winCount = targetDailyLogElement.getElementsByClassName(
+      "matchlog_list_win"
+    )[0].textContent;
+    const totalWinRateDiv = document.createElement("div");
+    totalWinRateDiv.style.textAlign = "center";
+    totalWinRateDiv.style.margin = "8px";
+    totalWinRateDiv.innerHTML =
+      "全体勝率 " + Math.floor((winCount / totalCount) * 100) + "%";
+    targetDailyLogElement.appendChild(totalWinRateDiv);
 
     var showCastResultsButton = document.createElement("button");
     showCastResultsButton.textContent = "キャスト別勝敗数を表示";
