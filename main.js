@@ -243,7 +243,7 @@ class showDailyResultByCastAtMatchLog {
   addShowCastResultsButton(targetDailyLogElement, targetBattleTypeClassName) {
     targetDailyLogElement.style.backgroundPositionY = "top";
     targetDailyLogElement.style.height =
-      targetDailyLogElement.clientHeight * 3 + "px";
+      targetDailyLogElement.clientHeight * 3 + 4 + "px";
 
     const totalCount = targetDailyLogElement.getElementsByClassName(
       "matchlog_list_total"
@@ -253,7 +253,7 @@ class showDailyResultByCastAtMatchLog {
     )[0].textContent;
     const totalWinRateDiv = document.createElement("div");
     totalWinRateDiv.style.textAlign = "center";
-    totalWinRateDiv.style.margin = "8px";
+    totalWinRateDiv.style.margin = "4px 0 0";
     totalWinRateDiv.innerHTML =
       "全体勝率 " + Math.floor((winCount / totalCount) * 100) + "%";
     targetDailyLogElement.appendChild(totalWinRateDiv);
