@@ -122,7 +122,7 @@ class showDailyResultByCastAtMatchLog {
   ) {
     targetDailyLogElement.getElementsByClassName("appended-button")[0].remove();
     targetDailyLogElement.style.height =
-      targetDailyLogElement.clientHeight / 2 + "px";
+      (targetDailyLogElement.clientHeight - 4) / 3 + "px";
 
     var targetDate = targetDailyLogElement.firstElementChild.href.slice(-10);
     var targetBlockHeight = targetDailyLogElement.clientHeight;
@@ -134,7 +134,7 @@ class showDailyResultByCastAtMatchLog {
           Object.keys(dailyResultByCast[targetDate][targetBattleTypeClassName])
             .length / castColumnCount
         ) +
-          1) +
+          2) +
       "px";
     targetDailyLogElement.style.textAlign = "left";
 
@@ -142,19 +142,17 @@ class showDailyResultByCastAtMatchLog {
       dailyResultByCast[targetDate][targetBattleTypeClassName]
     ).forEach(castHash => {
       var castBlock = document.createElement("div");
-      if (targetBlockHeight === 60) {
+      if (castColumnCount === 2) {
         castBlock.style.display = "inline-block";
         castBlock.style.width = "50%";
-        castBlock.style.fontSize = "1.3em";
-      } else {
-        castBlock.style.fontSize = "1.1em";
       }
+      castBlock.style.fontSize = "1.3em";
       castBlock.style.lineHeight = targetBlockHeight + "px";
       castBlock.style.height = targetBlockHeight + "px";
       castBlock.style.textAlign = "right";
 
       var resultTable = document.createElement("table");
-      resultTable.style.width = targetBlockHeight === 60 ? "100%" : "80%";
+      resultTable.style.width = castColumnCount === 2 ? "100%" : "80%";
       resultTable.style.margin = "auto";
       var resultTableRow = document.createElement("tr");
       var resultTableDataBase = document.createElement("td");
