@@ -297,7 +297,7 @@ class showDailyResultByCastAtMatchLog {
         targetBattleTypeClassName
       );
       [].forEach.call(targetDailyLogElements, targetBlock => {
-        this.addShowCastResultsButton(targetBlock, "block_matchlog_match");
+        this.addShowCastResultsButton(targetBlock, targetBattleTypeClassName);
       });
     });
   }
