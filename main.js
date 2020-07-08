@@ -66,7 +66,7 @@ class showDailyResultByCastAtMatchLog {
     targetDailyLogElement,
     dailyResultByCast = {}
   ) {
-    const battleType = getButtleTypeByUrl(targetDocument.URL);
+    const battleType = this.getButtleTypeByUrl(targetDocument.URL);
     [].forEach.call(
       targetDocument.getElementsByClassName(`block_${battleType}_log`),
       matchLog => {
