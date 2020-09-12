@@ -57,6 +57,7 @@ class showDailyResultByCastAtMatchLog {
   getButtleTypeByUrl(url) {
     if (!url.split("type=")[1] || url.split("type=")[1].split("&")[0] == "all") return "match";
     if (url.split("type=")[1].split("&")[0] == "bb") return "ball";
+    if (url.split("type=")[1].split("&")[0] == "astrologyv") return "match";
     return url.split("type=")[1].split("&")[0];
   }
 
@@ -280,9 +281,10 @@ class showDailyResultByCastAtMatchLog {
     }
     const targetBattleTypeClassNames = [
       "block_matchlog_match", // 全国対戦
-      "block_matchlog_astrology1",
-      "block_matchlog_concert",
-      "block_matchlog_ballroom",
+      "block_matchlog_concert",// 舞闘会
+      "block_matchlog_ballroom",// 協奏
+      "block_matchlog_astrology1",// 遊戯祭
+      "block_matchlog_astrology2",// 宿曜典
       /*
           "block_matchlog_astrology",
           "block_matchlog_astrology1",
